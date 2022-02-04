@@ -7,7 +7,7 @@ import 'package:stock/Model/BranchmasModel.dart';
 import 'Model/OfficemasModel.dart';
 
 String officeid;
-String branchid;
+int branchid;
 
 Future postUsers(String id, Album users) async {
   Map<String, String> header = {
@@ -22,37 +22,32 @@ Future postUsers(String id, Album users) async {
 }
 
 class Album {
-  //final String project;
-  final String branchid;
+  final String selectBranch;
+  //final String selectOffice;
   final String issuedto;
   final String mobile;
-  final String id;
 
   Album(
-      {
-//this.project,
-      this.branchid,
+      {this.selectBranch,
+      //this.selectOffice,
       this.issuedto,
-      this.id,
       this.mobile});
 
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
-      // project: json['project'],
-      branchid: json['branchid'],
+      selectBranch: json['branchid'],
+      //selectOffice: json['selectOffice'],
       issuedto: json['issuedto'],
       mobile: json['mobile'],
-      id: json['id'],
     );
   }
   Map<String, dynamic> toJson() => _$UsersToJson(this);
 
   Map<String, dynamic> _$UsersToJson(Album instance) => <String, dynamic>{
-        // 'Project': instance.project,
-        'Presentlocation': instance.branchid,
+        'branchid': instance.selectBranch,
+        // 'selectOffice': instance.selectOffice,
         'Issuedto': instance.issuedto,
         'mobile': instance.mobile,
-        'id': instance.id,
       };
 }
 
@@ -97,7 +92,7 @@ class TransferProduct extends StatefulWidget {
 
 class _TransferProductState extends State<TransferProduct> {
   TextEditingController mybranchid = TextEditingController();
-  TextEditingController myid = TextEditingController();
+  //TextEditingController myid = TextEditingController();
   TextEditingController myissuedto = TextEditingController();
   TextEditingController mymobile = TextEditingController();
 
@@ -156,6 +151,11 @@ class _TransferProductState extends State<TransferProduct> {
     }
   }
 
+  Future<void> setBranch(String id) async {
+    var d = await fetchBranchMas(id);
+    setState(() {});
+  }
+
   void initState() {
     super.initState();
     fetchOfficeData().then((users) {
@@ -175,7 +175,6 @@ class _TransferProductState extends State<TransferProduct> {
       body: SingleChildScrollView(
         child: Center(
             child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               child: Image.asset(
@@ -185,56 +184,20 @@ class _TransferProductState extends State<TransferProduct> {
                 width: double.infinity,
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Serial Number:',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-                Text(
-                  widget.prosrno,
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  'branchid Name:',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-                Text(
-                  widget.probranchide,
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-              ],
-            ),
             DropdownButton(
                 hint: Text('Select Office '),
                 value: officeid,
                 icon: Icon(Icons.keyboard_arrow_down),
-                items: convertedJsonDataOffic.map((OfficeMas items) {
-                  return DropdownMenuItem(
-                      value: items.officeid.toString(),
-                      child: Text(items.officeName));
-                }).toList(),
+                items: convertedJsonDataOffic != null
+                    ? convertedJsonDataOffic.map((OfficeMas items) {
+                        return DropdownMenuItem(
+                            value: items.officeid.toString(),
+                            child: Text(items.officeName));
+                      }).toList()
+                    : null,
                 onChanged: (dynamic newValue) {
-                  setState(() {
-                    officeid = newValue;
-                    fetchBranchMas(officeid);
-                  });
+                  officeid = newValue;
+                  setBranch(officeid);
                 }),
             DropdownButton(
                 hint: Text('Select Branch '),
@@ -259,10 +222,6 @@ class _TransferProductState extends State<TransferProduct> {
                 decoration: InputDecoration(
                   hintText: 'Issued To (Name)',
                   border: OutlineInputBorder(),
-                  // hintStyle: TextStyle(
-                  //   color: Colors.orange,
-                  //   fontWeight: FontWeight.bold,
-                  // ),
                 ),
               ),
             ),
@@ -272,70 +231,17 @@ class _TransferProductState extends State<TransferProduct> {
                 controller: mymobile,
                 decoration: InputDecoration(
                   hintText: 'Enter Mobile Number ...',
-                  // hintStyle: TextStyle(
-                  //   color: Colors.orange,
-                  //   fontWeight: FontWeight.bold,
-                  // ),
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: myid,
-                decoration: InputDecoration(
-                  hintText: 'Enter id ...',
-                  // hintStyle: TextStyle(
-                  //   color: Colors.orange,
-                  //   fontWeight: FontWeight.bold,
-                  // ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: DropdownButton(
-            //     icon: Icon(Icons.arrow_downward),
-            //     iconSize: 24,
-            //     elevation: 16,
-            //     isExpanded: true,
-            //     hint: Text(
-            //         'Please choose a location'), // Not necessary for Option 1
-            //     value: _selectedLocation,
-            //     onChanged: (newValue) {
-            //       setState(() {
-            //         _selectedLocation = newValue;
-            //       });
-            //     },
-            //     items: _locations.map((location) {
-            //       return DropdownMenuItem(
-            //         // child: new Text(location),
-            //         child: new Text(location),
-            //         value: location,
-            //       );
-            //     }).toList(),
-            //   ),
-            // ),
-
-            //     TextField(
-            // decoration: InputDecoration(
-            //   icon: Icon(Icons.send),
-            //   hintText: 'Hint Text',
-            //   helperText: 'Helper Text',
-            //   counterText: '0 characters',
-            //   border: OutlineInputBorder(),
-            //     )),
             ElevatedButton(
               child: Text('Update Data'),
               onPressed: () async {
                 Album user = new Album(
                   mobile: mymobile.text,
                   issuedto: myissuedto.text,
-                  id: myid.text,
-                  branchid: branchid,
+                  selectBranch: branchid.toString(),
                 );
 
                 //setState(() async {
