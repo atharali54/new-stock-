@@ -31,7 +31,7 @@ class _ItempageState extends State<Itempage> {
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
-        debugPrint(response.body);
+        //debugPrint(response.body);
 
         return allStockFromJson(response.body);
       } else {
@@ -390,14 +390,6 @@ class _ItempageState extends State<Itempage> {
           )
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //         context, MaterialPageRoute(builder: (context) => HomePage()));
-      //   },
-      //   child: Icon(Icons.home),
-      //   backgroundColor: Colors.brown,
-      // ),
     );
   }
 }

@@ -16,9 +16,6 @@ class CatPage extends StatefulWidget {
 }
 
 class _ApiMapEx04State extends State<CatPage> {
-  // List<dynamic> mapResponse;
-  // List listResponse;
-
   List<StockCat> convertedJsonData;
   List<StockCat> convertedJsonData1;
 
@@ -273,23 +270,10 @@ class _ApiMapEx04State extends State<CatPage> {
                         ),
                       ),
                     );
-                    // } else {
-                    //   return new CircularProgressIndicator(
-                    //     backgroundColor: Colors.red,
-                    //   );
-                    // }
                   },
                 )
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //         context, MaterialPageRoute(builder: (context) => HomePage()));
-      //   },
-      //   child: Icon(Icons.home_filled),
-      //   backgroundColor: Colors.brown,
-      // ),
     );
   }
 }

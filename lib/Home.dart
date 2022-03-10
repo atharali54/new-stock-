@@ -9,6 +9,7 @@ import 'CatPage.dart';
 import 'CategoryDrop.dart';
 import 'Officemas.dart';
 import 'Search.dart';
+import 'TestPage.dart';
 
 class HomePage extends StatelessWidget {
   final gridtitle = TextStyle(fontSize: 14, color: Colors.brown);
@@ -73,27 +74,39 @@ class HomePage extends StatelessWidget {
                               );
                             },
                           ),
-                          InkWell(
-                            child: MyContainer(
-                                myicon: Icons.search, tittle: 'SEARCH'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SearchScreen(),
-                                ),
-                              );
-                            },
-                          ),
+                          // InkWell(
+                          //   child: MyContainer(
+                          //       myicon: Icons.search, tittle: 'SEARCH'),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => SearchScreen(),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
 
+                          // InkWell(
+                          //   child: MyContainer(
+                          //       myicon: Icons.add, tittle: 'Stock Entry'),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => ItemEntries(),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                           InkWell(
-                            child: MyContainer(
-                                myicon: Icons.add, tittle: 'Stock Entry'),
+                            child:
+                                MyContainer(myicon: Icons.add, tittle: 'Test'),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ItemEntries(),
+                                  builder: (context) => TestPage(),
                                 ),
                               );
                             },
