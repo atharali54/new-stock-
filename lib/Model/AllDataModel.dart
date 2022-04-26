@@ -47,13 +47,13 @@ class AllStock {
   String dop;
   String dealer;
   String price;
-  Tehsil tehsil;
-  dynamic presentlocation;
+  String tehsil;
+  String presentlocation;
   String installationdate;
   String remarks;
   WarrantyPeriod warrantyPeriod;
   AmcPeriod amcPeriod;
-  Status status;
+  String status;
   dynamic project;
   int branchid;
   String issuedto;
@@ -71,13 +71,15 @@ class AllStock {
         dop: json["dop"],
         dealer: json["dealer"],
         price: json["price"],
-        tehsil: tehsilValues.map[json["tehsil"]],
+        tehsil: json["price"],
+        // tehsil: tehsilValues.map[json["tehsil"]],
         presentlocation: json["presentlocation"],
         installationdate: json["installationdate"],
         remarks: json["remarks"],
         warrantyPeriod: warrantyPeriodValues.map[json["warrantyPeriod"]],
         amcPeriod: amcPeriodValues.map[json["amcPeriod"]],
-        status: statusValues.map[json["status"]],
+        //status: statusValues.map[json["status"]],
+        status: json["status"],
         project: json["project"],
         branchid: json["branchid"],
         issuedto: json["issuedto"] == null ? null : json["issuedto"],

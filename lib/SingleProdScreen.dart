@@ -261,14 +261,6 @@ class _MySingleProductState extends State<MySingleProduct> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //         context, MaterialPageRoute(builder: (context) => HomePage()));
-      //   },
-      //   child: Icon(Icons.home),
-      //   backgroundColor: Colors.brown,
-      // ),
     );
   }
 }

@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stock/Drawer.dart';
 
-import 'package:stock/AddItems.dart';
-
-import 'package:stock/Login.dart';
 import 'CatPage.dart';
 
-import 'CategoryDrop.dart';
-import 'Officemas.dart';
-import 'Search.dart';
-import 'TestPage.dart';
+import 'FilterStock.dart';
 
 class HomePage extends StatelessWidget {
   final gridtitle = TextStyle(fontSize: 14, color: Colors.brown);

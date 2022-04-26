@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:stock/Model/BranchmasModel.dart';
 import 'Model/AllDataModel.dart';
 import 'Model/OfficemasModel.dart';
+import 'SinglePageData.dart';
 import 'SingleProdScreen.dart';
 import 'Transfer.dart';
 
@@ -204,47 +205,176 @@ class _TestPageState extends State<TestPage> {
                       ? GridView.builder(
                           gridDelegate:
                               new SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3),
+                                  crossAxisCount: 1, mainAxisExtent: 176),
 
                           // current the spelling of length here
                           //convertedJsonData == null ? 0 : convertedJsonData.length,
                           //   itemCount: convertedJsonData.length,
                           itemCount: convertedJsonData?.length ?? 0,
                           itemBuilder: (context, index) {
-                            return Card(
-                              color: Colors.grey[350],
-                              elevation: 20,
-                              child: Center(
-                                child: Stack(
-                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      convertedJsonData[index]
-                                          .dop
-                                          .toString(), //+ convertedJsonData[index],
-                                      style: TextStyle(
-                                        color: Colors.brown,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SingleProductPage(
+                                        promodelid: convertedJsonData[index]
+                                            .branchid
+                                            .toString(),
+                                        // promake: convertedJsonData[index]
+                                        //     .make
+                                        //     .toString(),
+                                        // proremarks: convertedJsonData1[index]
+                                        //     .remarks
+                                        //     .toString(),
+                                        prostatus: convertedJsonData[index]
+                                            .status
+                                            .toString(),
+                                        // procategory: convertedJsonData[index]
+                                        //     .category
+                                        //     .toString(),
+                                        // prostockRegister: convertedJsonData[index]
+                                        //     .stockRegister
+                                        //     .toString(),
+
+                                        propresentlocation:
+                                            convertedJsonData[index]
+                                                .presentlocation
+                                                .toString(),
+                                        // protehsil: convertedJsonData[index]
+                                        //     .tehsil
+                                        //     .toString(),
+                                        prosrno: convertedJsonData[index]
+                                            .srno
+                                            .toString(),
+                                        promodelno: convertedJsonData[index]
+                                            .modelno
+                                            .toString(),
+                                        proprice: convertedJsonData[index]
+                                            .price
+                                            .toString(),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(18.0),
-                                      child: Text(
-                                        convertedJsonData[index]
-                                            .category
-                                            .toString(),
-                                        style: TextStyle(
-                                          color: Colors.brown,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                  );
+                                },
+                                child: Container(
+                                  color: Colors.brown[100],
+                                  child: ListTile(
+                                    title: Column(
+                                      children: [
+                                        Text(
+                                          convertedJsonData[index]
+                                              .category
+                                              .toString(), //+ convertedJsonData[index],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
+                                        Text(
+                                          convertedJsonData[index]
+                                              .price
+                                              .toString(), //+ convertedJsonData[index],
+                                          style: TextStyle(
+                                            color: Colors.brown,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        Text(convertedJsonData[index]
+                                            .presentlocation
+                                            .toString()),
+                                        Text(convertedJsonDataOffic[index]
+                                            .officeName),
+                                        Text(convertedJsonBranch[index]
+                                            .branchName)
+                                      ],
+                                    ),
+                                    leading: Icon(Icons.code,
+                                        size: 30, color: Colors.brown),
+                                    trailing: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TransferProduct(
+                                                    probranchide:
+                                                        convertedJsonData[index]
+                                                            .branchid
+                                                            .toString(),
+                                                    promodelid:
+                                                        convertedJsonData[index]
+                                                            .serialno),
+
+                                            //Cart(_cartList),
+                                          ),
+                                        );
+                                      },
+                                      child: Text('Tr'),
+                                    ),
+                                  ),
+                                )
+                                // Card(
+                                //   color: Colors.grey[350],
+                                //   elevation: 20,
+                                //   child: Center(
+                                //     child: Column(
+                                //       // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                //       children: [
+                                //         Padding(padding: EdgeInsets.all(10)),
+                                //         Text(
+                                //           convertedJsonData[index]
+                                //               .dop
+                                //               .toString(), //+ convertedJsonData[index],
+                                //           style: TextStyle(
+                                //             color: Colors.brown,
+                                //             fontWeight: FontWeight.bold,
+                                //             fontSize: 14,
+                                //           ),
+                                //         ),
+                                //         Text(convertedJsonData[index]
+                                //             .presentlocation
+                                //             .toString()),
+                                //         Padding(
+                                //           padding: const EdgeInsets.all(18.0),
+                                //           child: Text(
+                                //             convertedJsonData[index]
+                                //                 .category
+                                //                 .toString(),
+                                //             style: TextStyle(
+                                //               color: Colors.brown,
+                                //               fontWeight: FontWeight.bold,
+                                //               fontSize: 20,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         ElevatedButton(
+                                //           onPressed: () {
+                                //             Navigator.of(context).push(
+                                //               MaterialPageRoute(
+                                //                 builder: (context) =>
+                                //                     TransferProduct(
+                                //                         probranchide:
+                                //                             convertedJsonData[
+                                //                                     index]
+                                //                                 .branchid
+                                //                                 .toString(),
+                                //                         promodelid:
+                                //                             convertedJsonData[
+                                //                                     index]
+                                //                                 .serialno),
+
+                                //                 //Cart(_cartList),
+                                //               ),
+                                //             );
+                                //           },
+                                //           child: Text('Transfer'),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
+                                );
                           },
                         )
                       : Column(
