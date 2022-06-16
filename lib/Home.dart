@@ -4,6 +4,7 @@ import 'package:stock/Drawer.dart';
 import 'CatPage.dart';
 
 import 'FilterStock.dart';
+import 'Search.dart';
 
 class HomePage extends StatelessWidget {
   final gridtitle = TextStyle(fontSize: 14, color: Colors.brown);
@@ -58,7 +59,7 @@ class HomePage extends StatelessWidget {
                           InkWell(
                             child: MyContainer(
                                 myicon: Icons.supervised_user_circle,
-                                tittle: 'CAREGORIES'),
+                                tittle: 'Category Wise'),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -68,18 +69,18 @@ class HomePage extends StatelessWidget {
                               );
                             },
                           ),
-                          // InkWell(
-                          //   child: MyContainer(
-                          //       myicon: Icons.search, tittle: 'SEARCH'),
-                          //   onTap: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => SearchScreen(),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
+                          InkWell(
+                            child: MyContainer(
+                                myicon: Icons.search, tittle: 'Name/Mobile/Serial No Wise'),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchScreen(),
+                                ),
+                              );
+                            },
+                          ),
 
                           // InkWell(
                           //   child: MyContainer(
@@ -94,8 +95,8 @@ class HomePage extends StatelessWidget {
                           //   },
                           // ),
                           InkWell(
-                            child:
-                                MyContainer(myicon: Icons.add, tittle: 'Test'),
+                            child: MyContainer(
+                                myicon: Icons.add, tittle: 'Office Wise'),
                             onTap: () {
                               Navigator.push(
                                 context,

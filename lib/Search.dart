@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
+import 'package:stock/Model/AllDataModel.dart';
 
 import 'dart:async';
 
-import 'package:stock/Widgets.dart';
-
-import 'Model/CategoryModel.dart';
+import 'SingleProdScreen.dart';
+import 'Transfer.dart';
 
 String statusValue;
 
@@ -17,19 +19,21 @@ class SearchScreen extends StatefulWidget {
 class _ApiMapEx04State extends State<SearchScreen> {
   List<dynamic> mapResponse;
   List listResponse;
+  String _scanBarcode = 'Unknown';
 
-  List<StockCat> convertedJsonData;
-  List<StockCat> convertedJsonData1;
+  List<AllStock> convertedJsonData;
+  List<AllStock> convertedJsonData1;
+  TextEditingController textEditingController = new TextEditingController();
 
-  Future<List<StockCat>> fetchData() async {
+  Future<List<AllStock>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/catwise');
+          await http.get('http://103.87.24.57/stockapi/stock');
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
 
-        return stockCatFromJson(response.body);
+        return allStockFromJson(response.body);
       } else {
         return throw Exception('Failed to load ...');
       }
@@ -38,41 +42,62 @@ class _ApiMapEx04State extends State<SearchScreen> {
     }
   }
 
+  Future<void> startBarcodeScanStream() async {
+    FlutterBarcodeScanner.getBarcodeStreamReceiver(
+            '#ff6666', 'Cancel', true, ScanMode.BARCODE)
+        .listen((barcode) => print(barcode));
+  }
+
+  Future<void> scanQR() async {
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+//barcode scanner flutter ant
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
+  }
+
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+    setState(() {
+      textEditingController.text = barcodeScanRes;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchData().then((users) {
       setState(() {
         convertedJsonData = users;
-        debugPrint(convertedJsonData.length.toString());
       });
     });
   }
 
-  var itemStatus = [
-    'Select All ',
-    'I Ball Splendo',
-    'Air Blower',
-    'Air Conditioner',
-    'Almirah',
-    'Battery',
-    'Bio Matric Device',
-    'Cabinet',
-    'Camera',
-    'Card Cutter',
-    'CCTV Cameras',
-    'Chair',
-    'Computer',
-    'USB HUB' 'Wall Fan',
-    'Web Cam',
-  ];
   void filterdate() {
-    if (statusValue != null && statusValue != 'Select All') {
+    if (textEditingController.text != null &&
+        textEditingController.text.trim().length != 0) {
       convertedJsonData1 = convertedJsonData
-          .where((element) => element.category
-              .toString()
+          .where((element) => (element.serialno.toString() +
+                  element.issuedto.toString() +
+                  element.mobile.toString())
               .toLowerCase()
-              .contains(statusValue.toLowerCase()))
+              .contains((textEditingController.text.toLowerCase())))
           .toList();
     }
   }
@@ -81,23 +106,27 @@ class _ApiMapEx04State extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search '),
+        title: Text('Search by Name/Mobile/Serial No'),
       ),
       body: Column(
         children: [
-          DropdownButton(
-              //isExpanded: true,
-              hint: Text('Category '),
-              value: statusValue,
-              icon: Icon(Icons.keyboard_arrow_down),
-              items: itemStatus.map((String items) {
-                return DropdownMenuItem(value: items, child: Text(items));
-              }).toList(),
-              onChanged: (String newValue) {
-                setState(() {
-                  statusValue = newValue;
-                });
-              }),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: TextField(
+              controller: textEditingController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter Sr/Name/Mobile',
+                hintText: 'Sr/Name/Mobile',
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    scanBarcodeNormal();
+                  },
+                  icon: Icon(Icons.remove_red_eye_outlined),
+                ),
+              ),
+            ),
+          ),
           ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -105,50 +134,120 @@ class _ApiMapEx04State extends State<SearchScreen> {
                 });
               },
               child: Text('SEARCH')),
-          GridView.builder(
-            shrinkWrap: true,
-            itemCount:
-                convertedJsonData1 == null ? 0 : convertedJsonData1.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 10,
-              crossAxisCount: 1,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => Itempage(
-                            id: convertedJsonData1[index].category.toString())
-                        //Cart(_cartList),
+          Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount:
+                    convertedJsonData1 == null ? 0 : convertedJsonData1.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MySingleProduct(
+                              probranchid:
+                                  convertedJsonData1[index].branchid.toString(),
+                              prooffice:
+                                  convertedJsonData1[index].office.toString(),
+                              probranch:
+                                  convertedJsonData1[index].branch.toString(),
+                              probissue:
+                                  convertedJsonData1[index].issuedto.toString(),
+                              probmobile:
+                                  convertedJsonData1[index].mobile.toString(),
+                              promake:
+                                  convertedJsonData1[index].make.toString(),
+                              proremarks:
+                                  convertedJsonData1[index].remarks.toString(),
+                              prostatus:
+                                  convertedJsonData1[index].status.toString(),
+                              procategory:
+                                  convertedJsonData1[index].category.toString(),
+                              prostockRegister: convertedJsonData1[index]
+                                  .stockRegister
+                                  .toString(),
+                              prowarrantyPeriod: convertedJsonData1[index]
+                                  .warrantyPeriod
+                                  .toString(),
+                              protehsil:
+                                  convertedJsonData1[index].tehsil.toString(),
+                              prosrno:
+                                  convertedJsonData1[index].srno.toString(),
+                              proprice:
+                                  convertedJsonData1[index].price.toString(),
+                              prodealer:
+                                  convertedJsonData1[index].dealer.toString(),
+                              promodelno:
+                                  convertedJsonData1[index].modelno.toString(),
+                              prodevicesrno:
+                                  convertedJsonData1[index].serialno.toString(),
+                              promodelid:
+                                  convertedJsonData1[index].project.toString()),
+
+                          //Cart(_cartList),
                         ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5.0),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        selected: true,
+                        selectedTileColor: Colors.grey[300],
+                        title: Text(
+                          convertedJsonData1[index].make +
+                              " " +
+                              convertedJsonData1[index].modelno,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        leading: Icon(Icons.arrow_back),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => TransferProduct(
+                                  srno:
+                                      convertedJsonData1[index].srno.toString(),
+                                  office: convertedJsonData1[index]
+                                      .office
+                                      .toString(),
+                                  branchid: convertedJsonData1[index]
+                                      .branchid
+                                      .toString(),
+                                  issued: convertedJsonData1[index]
+                                      .issuedto
+                                      .toString(),
+                                  mobile: convertedJsonData1[index]
+                                      .mobile
+                                      .toString(),
+                                ),
+
+                                //Cart(_cartList),
+                              ),
+                            );
+                          },
+                          child: Text('TR'),
+                        ),
+                        // Text(
+                        //   '₹' + convertedJsonData1[index].price.toString(),
+                        //   style: TextStyle(color: Colors.green),
+                        // ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text(convertedJsonData1[index]
+                            //     .warrantyPeriod
+                            //     .toString()),
+                            Text('S.No: ' + convertedJsonData1[index].serialno),
+                            Text('Issued: ' +
+                                convertedJsonData1[index].issuedto.toString()),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
-                },
-                child: ListTile(
-                  leading: Icon(Icons.code, size: 30, color: Colors.brown),
-                  trailing: Text(
-                    convertedJsonData1[index]
-                        .total
-                        .toString(), //+ convertedJsonData[index],
-                    style: TextStyle(
-                      color: Colors.brown,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                  title: Text(
-                    convertedJsonData1[index]
-                        .category
-                        .toString(), //+ convertedJsonData[index],
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              );
-            },
+                }),
           ),
         ],
       ),

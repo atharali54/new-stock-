@@ -5,10 +5,13 @@ import 'dart:async';
 
 import 'package:stock/Widgets.dart';
 
-import 'Home.dart';
+import 'Model/BranchmasModel.dart';
 import 'Model/CategoryModel.dart';
+import 'Model/OfficemasModel.dart';
 
 String statusValue;
+String officeid;
+int branchid;
 
 class CatPage extends StatefulWidget {
   @override
@@ -18,6 +21,8 @@ class CatPage extends StatefulWidget {
 class _ApiMapEx04State extends State<CatPage> {
   List<StockCat> convertedJsonData;
   List<StockCat> convertedJsonData1;
+  List<OfficeMas> convertedJsonDataOffic;
+  List<BranchMas> convertedJsonBranch;
 
   Future<List<StockCat>> fetchData() async {
     try {
@@ -34,15 +39,75 @@ class _ApiMapEx04State extends State<CatPage> {
     }
   }
 
+  Future<List<StockCat>> fetchbyidData(String id) async {
+    try {
+      http.Response response =
+          await http.get('http://103.87.24.57/stockapi/catwise/' + id);
+      if (response.statusCode == 200) {
+        var d = stockCatFromJson(response.body);
+        return d;
+      } else {
+        return throw Exception('Failed to load ...');
+      }
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
+  Future<List<OfficeMas>> fetchOfficeData() async {
+    try {
+      http.Response response =
+          await http.get('http://103.87.24.57/stockapi/officemas');
+      if (response.statusCode == 200) {
+        convertedJsonDataOffic = officeMasFromJson(response.body);
+        return convertedJsonDataOffic;
+      } else {
+        return throw Exception('Failed to load ...');
+      }
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
+  Future<List<BranchMas>> fetchBranchMas(String officeid) async {
+    try {
+      http.Response response = await http
+          .get('http://103.87.24.57/stockapi/branchmas/' + officeid.toString());
+      if (response.statusCode == 200) {
+        convertedJsonBranch = branchMasFromJson(response.body);
+        return convertedJsonBranch;
+      } else {
+        return throw Exception('Failed to load ...');
+      }
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    fetchOfficeData().then((users) {
+      setState(() {
+        convertedJsonDataOffic = users;
+        convertedJsonDataOffic.insert(
+            0, OfficeMas(officeName: 'Select All', officeid: 0));
+        //debugPrint(convertedJsonDataOffic.length.toString());
+      });
+    });
     fetchData().then((users) {
       setState(() {
         convertedJsonData = users;
-        //  debugPrint(convertedJsonData.length.toString());
+        convertedJsonData1 = convertedJsonData;
       });
     });
+  }
+
+  Future<void> setBranch(String id) async {
+    branchid = null;
+    var d = await fetchBranchMas(id);
+    setState(() {});
   }
 
   var itemStatus = [
@@ -95,14 +160,31 @@ class _ApiMapEx04State extends State<CatPage> {
     'USB HUB' 'Wall Fan',
     'Web Cam',
   ];
-  void filterdate() {
+  Future<void> filterdate() async {
+    if (branchid != null) {
+      await fetchbyidData(branchid.toString()).then((users) {
+        convertedJsonData = users;
+        //debugPrint(convertedJsonDataOffic.length.toString());
+      });
+    } else {
+      await fetchData().then((users) {
+        convertedJsonData = users;
+        //  debugPrint(convertedJsonData.length.toString());
+      });
+    }
     if (statusValue != null && statusValue != 'Select All') {
-      convertedJsonData1 = convertedJsonData
-          .where((element) => element.category
-              .toString()
-              .toLowerCase()
-              .contains(statusValue.toLowerCase()))
-          .toList();
+      setState(() {
+        convertedJsonData1 = convertedJsonData
+            .where((element) => element.category
+                .toString()
+                .toLowerCase()
+                .contains(statusValue.toLowerCase()))
+            .toList();
+      });
+    } else {
+      setState(() {
+        convertedJsonData1 = convertedJsonData;
+      });
     }
   }
 
@@ -115,6 +197,55 @@ class _ApiMapEx04State extends State<CatPage> {
       ),
       body: Column(
         children: [
+          Container(
+              margin: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 0),
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                ),
+              ),
+              child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text('Select Office '),
+                  value: officeid,
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  items: convertedJsonDataOffic != null
+                      ? convertedJsonDataOffic.map((OfficeMas items) {
+                          return DropdownMenuItem(
+                              value: items.officeid.toString(),
+                              child: Text(items.officeName));
+                        }).toList()
+                      : null,
+                  onChanged: (dynamic newValue) {
+                    officeid = newValue;
+                    setBranch(officeid);
+                  })),
+          Container(
+              margin: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 0),
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                ),
+              ),
+              child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text('Select Branch '),
+                  value: branchid,
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  items: convertedJsonBranch != null
+                      ? convertedJsonBranch.map((BranchMas items) {
+                          return DropdownMenuItem(
+                              value: items.branchid,
+                              child: Text(items.branchName));
+                        }).toList()
+                      : null,
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      branchid = newValue;
+                    });
+                  })),
           DropdownButton(
               //isExpanded: true,
               hint: Text('Category '),
@@ -130,148 +261,92 @@ class _ApiMapEx04State extends State<CatPage> {
               }),
           ElevatedButton(
               onPressed: () {
-                setState(() {
-                  filterdate();
-                });
+                filterdate();
               },
               child: Text('SEARCH')),
-          indexRadio == statusValue
-              ? Expanded(
-                  child: FutureBuilder(
-                      future: fetchData(),
-                      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                        return snapshot.hasData
-                            ? GridView.builder(
-                                gridDelegate:
-                                    new SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3),
+          Expanded(
+            child: FutureBuilder(
+                future: fetchData(),
+                builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                  return snapshot.hasData
+                      ? GridView.builder(
+                          gridDelegate:
+                              new SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3),
 
-                                // current the spelling of length here
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => Itempage(
-                                                id: convertedJsonData[index]
-                                                    .category
-                                                    .toString())
-                                            //Cart(_cartList),
-                                            ),
-                                      );
-                                    },
-                                    child: Card(
-                                      color: Colors.grey[350],
-                                      elevation: 20,
-                                      child: Center(
-                                        child: Stack(
-                                          // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Text(
-                                              convertedJsonData[index]
-                                                  .category
-                                                  .toString(), //+ convertedJsonData[index],
-                                              style: TextStyle(
-                                                color: Colors.brown,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(18.0),
-                                              child: Text(
-                                                convertedJsonData[index]
-                                                    .total
-                                                    .toString(),
-                                                style: TextStyle(
-                                                  color: Colors.brown,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                          // current the spelling of length here
+                          itemCount: convertedJsonData1.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => Itempage(
+                                            id: convertedJsonData1[index]
+                                                .category
+                                                .toString(),
+                                            branchid: branchid,
+                                          )
+                                      //Cart(_cartList),
+                                      ),
+                                );
+                              },
+                              child: Card(
+                                color: Colors.grey[350],
+                                elevation: 20,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      convertedJsonData1[index]
+                                          .category
+                                          .toString(), //+ convertedJsonData[index],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.brown,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
                                       ),
                                     ),
-                                  );
-                                },
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Please wait.......',
-                                    style: TextStyle(
+                                    Text(
+                                      convertedJsonData1[index]
+                                          .total
+                                          .toString(),
+                                      style: TextStyle(
+                                        color: Colors.brown,
+                                        fontWeight: FontWeight.bold,
                                         fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 38.0),
-                                    child: Center(
-                                        child: const CircularProgressIndicator(
-                                      backgroundColor: Colors.brown,
-                                      valueColor:
-                                          AlwaysStoppedAnimation(Colors.green),
-                                      strokeWidth: 5,
-                                    )),
-                                  ),
-                                ],
-                              );
-                      }),
-                )
-              : GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: convertedJsonData1 == null
-                      ? 0
-                      : convertedJsonData1.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: 10,
-                    crossAxisCount: 1,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    // if (convertedJsonData1 == null) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Itempage(
-                                  id: convertedJsonData1[index]
-                                      .category
-                                      .toString())
-                              //Cart(_cartList),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
+                            );
+                          },
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Please wait.......',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 38.0),
+                              child: Center(
+                                  child: const CircularProgressIndicator(
+                                backgroundColor: Colors.brown,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.green),
+                                strokeWidth: 5,
+                              )),
+                            ),
+                          ],
                         );
-                      },
-                      child: ListTile(
-                        leading:
-                            Icon(Icons.code, size: 30, color: Colors.brown),
-                        trailing: Text(
-                          convertedJsonData1[index]
-                              .total
-                              .toString(), //+ convertedJsonData[index],
-                          style: TextStyle(
-                            color: Colors.brown,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        title: Text(
-                          convertedJsonData1[index]
-                              .category
-                              .toString(), //+ convertedJsonData[index],
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                )
+                }),
+          )
         ],
       ),
     );

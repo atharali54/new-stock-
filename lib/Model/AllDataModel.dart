@@ -24,7 +24,6 @@ class AllStock {
     this.dealer,
     this.price,
     this.tehsil,
-    this.presentlocation,
     this.installationdate,
     this.remarks,
     this.warrantyPeriod,
@@ -32,6 +31,8 @@ class AllStock {
     this.status,
     this.project,
     this.branchid,
+    this.office,
+    this.branch,
     this.issuedto,
     this.mobile,
   });
@@ -56,6 +57,8 @@ class AllStock {
   String status;
   dynamic project;
   int branchid;
+  String office;
+  String branch;
   String issuedto;
   String mobile;
 
@@ -73,7 +76,7 @@ class AllStock {
         price: json["price"],
         tehsil: json["price"],
         // tehsil: tehsilValues.map[json["tehsil"]],
-        presentlocation: json["presentlocation"],
+
         installationdate: json["installationdate"],
         remarks: json["remarks"],
         warrantyPeriod: warrantyPeriodValues.map[json["warrantyPeriod"]],
@@ -82,6 +85,8 @@ class AllStock {
         status: json["status"],
         project: json["project"],
         branchid: json["branchid"],
+        office: json["office"],
+        branch: json["branch"],
         issuedto: json["issuedto"] == null ? null : json["issuedto"],
         mobile: json["mobile"] == null ? null : json["mobile"],
       );
@@ -99,7 +104,6 @@ class AllStock {
         "dealer": dealer,
         "price": price,
         "tehsil": tehsilValues.reverse[tehsil],
-        "presentlocation": presentlocation,
         "installationdate": installationdate,
         "remarks": remarks,
         "warrantyPeriod": warrantyPeriodValues.reverse[warrantyPeriod],
@@ -107,6 +111,8 @@ class AllStock {
         "status": statusValues.reverse[status],
         "project": project,
         "branchid": branchid,
+        "office": office,
+        "branchname": branch,
         "issuedto": issuedto == null ? null : issuedto,
         "mobile": mobile == null ? null : mobile,
       };

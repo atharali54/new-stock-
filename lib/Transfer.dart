@@ -53,38 +53,21 @@ class Album {
 
 // ignore: must_be_immutable
 class TransferProduct extends StatefulWidget {
-  String promodelid;
-  String proprice;
-  String prosrno;
-  String prostockRegister;
-  String promodelno;
-  String promake;
-  String proremarks;
-  String procategory;
-  String protehsil;
-  String prostatus;
-  String probranchide;
-  String prowarrantyPeriod;
-  String prodealer;
-  String propresentlocation;
+  String srno;
+  String office;
+  String branchid;
+  String issued;
+  String mobile;
+
   // String prodealer;
-  TransferProduct(
-      {Key key,
-      this.promake,
-      this.promodelid,
-      this.procategory,
-      this.proprice,
-      this.prodealer,
-      this.promodelno,
-      this.probranchide,
-      this.proremarks,
-      this.prosrno,
-      this.prostatus,
-      this.prostockRegister,
-      this.protehsil,
-      this.propresentlocation,
-      this.prowarrantyPeriod})
-      : super(key: key);
+  TransferProduct({
+    Key key,
+    this.srno,
+    this.office,
+    this.branchid,
+    this.issued,
+    this.mobile,
+  }) : super(key: key);
 
   @override
   State<TransferProduct> createState() => _TransferProductState();
@@ -161,7 +144,15 @@ class _TransferProductState extends State<TransferProduct> {
     fetchOfficeData().then((users) {
       setState(() {
         convertedJsonDataOffic = users;
-        //debugPrint(convertedJsonDataOffic.length.toString());
+        myissuedto.text = widget.issued;
+        mymobile.text = widget.mobile;
+        officeid = convertedJsonDataOffic
+            .where((element) => element.officeName == widget.office)
+            .first
+            .officeid
+            .toString();
+        setBranch(officeid);
+        branchid = int.parse(widget.branchid);
       });
     });
   }
@@ -245,17 +236,18 @@ class _TransferProductState extends State<TransferProduct> {
                 );
 
                 //setState(() async {
-                var res =
-                    await postUsers(widget.prosrno, user).whenComplete(() {
+                var res = await postUsers(widget.srno, user).whenComplete(() {
                   showDialog(
                     context: context,
+                    useRootNavigator: false,
                     builder: (ctx) => AlertDialog(
                       title: Text("Alert"),
                       content: Text("Record Updated Successfully"),
                       actions: <Widget>[
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.of(ctx).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                           },
                           child: Text("OK"),
                         ),
@@ -263,7 +255,7 @@ class _TransferProductState extends State<TransferProduct> {
                     ),
                   );
                 });
-                print(res.toString());
+                //print(res.toString());
                 // });
               },
             ),
