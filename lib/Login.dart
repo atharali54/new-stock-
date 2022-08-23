@@ -63,7 +63,7 @@ class _SigninState extends State<Signin> {
       } else if (convertedJsonDatalogin[0].pass == password &&
           convertedJsonDatalogin[0].type == "U") {
         erromsg = ' ';
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => HomeUser(
@@ -74,7 +74,7 @@ class _SigninState extends State<Signin> {
       } else if (convertedJsonDatalogin[0].pass == password &&
           convertedJsonDatalogin[0].type == "A") {
         erromsg = ' ';
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
       }
     }
@@ -102,8 +102,7 @@ class _SigninState extends State<Signin> {
               keyboardType: TextInputType.number,
               maxLength: 10,
               controller: emailController,
-              decoration:
-                  InputDecoration(labelText: 'Enter Username or Mobile'),
+              decoration: InputDecoration(labelText: 'Enter Mobile'),
             ),
             SizedBox(height: 10.0),
             TextFormField(

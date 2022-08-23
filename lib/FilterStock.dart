@@ -67,7 +67,7 @@ class _TestPageState extends State<TestPage> {
 
   void initState() {
     super.initState();
-    if (widget.utype == "A") {
+    if (widget.utype != "U") {
       fetchOfficeData().then((users) {
         setState(() {
           convertedJsonDataOffic = users;
@@ -75,7 +75,7 @@ class _TestPageState extends State<TestPage> {
       });
     }
 
-    if (widget.utype == "A") {
+    if (widget.utype != "U") {
       getStock();
     } else {
       fetchBranchStock(widget.bid).then((users) {
@@ -153,7 +153,7 @@ class _TestPageState extends State<TestPage> {
         children: [
           Container(
               padding: EdgeInsets.only(top: 20),
-              child: widget.utype == "A"
+              child: widget.utype != "U"
                   ? Column(
                       children: <Widget>[
                         Container(
@@ -298,7 +298,7 @@ class _TestPageState extends State<TestPage> {
                           maxLines: 1,
                           softWrap: false,
                         ),
-                        leading: widget.utype == "A"
+                        leading: widget.utype != "U"
                             ? ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(

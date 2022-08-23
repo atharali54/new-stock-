@@ -97,6 +97,7 @@ class _ApiMapEx04State extends State<SearchScreen> {
     });
 
     textEditingController.text = widget.Mob;
+    print(widget.utype);
   }
 
   void filterdate() {
@@ -123,7 +124,7 @@ class _ApiMapEx04State extends State<SearchScreen> {
           Padding(
             padding: EdgeInsets.all(10),
             child: TextField(
-              enabled: widget.utype == "A" ? true : false,
+              enabled: widget.utype == "U" ? false : true,
               controller: textEditingController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),

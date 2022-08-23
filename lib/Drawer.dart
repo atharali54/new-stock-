@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stock/Home.dart';
+import 'package:stock/Login.dart';
 
 import 'CatPage.dart';
 import 'Search.dart';
@@ -87,6 +88,21 @@ class _DrawerMenuState extends State<DrawerMenu> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => SearchScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.login_outlined,
+              color: Colors.brown,
+              size: 30,
+            ),
+            title: Text(
+              'Logout',
+              style: TextStyle(fontSize: 20),
+            ),
+            onTap: () {
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => Signin()));
             },
           ),
         ],
