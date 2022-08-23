@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:stock/CatWithModel.dart';
 import 'package:stock/Home.dart';
+import 'package:stock/Login.dart';
 
 import 'Officemas.dart';
 
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.brown),
-      home: HomePage(),
+      home: Signin(),
       //  OfficeBranchApiData(),
     );
   }

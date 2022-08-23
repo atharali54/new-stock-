@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:stock/Model/BranchmasModel.dart';
+import 'CatPage.dart';
 import 'Model/OfficemasModel.dart';
 
 String officeid;
@@ -26,12 +27,14 @@ class Album {
   //final String selectOffice;
   final String issuedto;
   final String mobile;
+  final String remarks;
 
   Album(
       {this.selectBranch,
       //this.selectOffice,
       this.issuedto,
-      this.mobile});
+      this.mobile,
+      this.remarks});
 
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
@@ -39,6 +42,7 @@ class Album {
       //selectOffice: json['selectOffice'],
       issuedto: json['issuedto'],
       mobile: json['mobile'],
+      remarks: json['remarks'],
     );
   }
   Map<String, dynamic> toJson() => _$UsersToJson(this);
@@ -48,6 +52,7 @@ class Album {
         // 'selectOffice': instance.selectOffice,
         'Issuedto': instance.issuedto,
         'mobile': instance.mobile,
+        'remarks': instance.remarks,
       };
 }
 
@@ -58,16 +63,22 @@ class TransferProduct extends StatefulWidget {
   String branchid;
   String issued;
   String mobile;
+  String remarks;
+  String procategory;
+  String proOffice;
 
   // String prodealer;
-  TransferProduct({
-    Key key,
-    this.srno,
-    this.office,
-    this.branchid,
-    this.issued,
-    this.mobile,
-  }) : super(key: key);
+  TransferProduct(
+      {Key key,
+      this.srno,
+      this.office,
+      this.branchid,
+      this.issued,
+      this.mobile,
+      this.procategory,
+      this.proOffice,
+      this.remarks})
+      : super(key: key);
 
   @override
   State<TransferProduct> createState() => _TransferProductState();
@@ -78,6 +89,7 @@ class _TransferProductState extends State<TransferProduct> {
   //TextEditingController myid = TextEditingController();
   TextEditingController myissuedto = TextEditingController();
   TextEditingController mymobile = TextEditingController();
+  TextEditingController myremarks = TextEditingController();
 
   Future<Album> _futureAlbum;
 
@@ -135,6 +147,7 @@ class _TransferProductState extends State<TransferProduct> {
   }
 
   Future<void> setBranch(String id) async {
+    branchid = null;
     var d = await fetchBranchMas(id);
     setState(() {});
   }
@@ -167,52 +180,84 @@ class _TransferProductState extends State<TransferProduct> {
         child: Center(
             child: Column(
           children: <Widget>[
+            // Container(
+            //   child: Image.asset(
+            //     'assets/homeBg.jpg',
+            //     fit: BoxFit.cover,
+            //     height: 200,
+            //     width: double.infinity,
+            //   ),
+            // ),
             Container(
-              child: Image.asset(
-                'assets/homeBg.jpg',
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
-              ),
+              margin: EdgeInsets.only(left: 14, right: 14),
+              child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text('Select Office '),
+                  value: officeid,
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  items: convertedJsonDataOffic != null
+                      ? convertedJsonDataOffic.map((OfficeMas items) {
+                          return DropdownMenuItem(
+                              value: items.officeid.toString(),
+                              child: Text(
+                                items.officeName,
+                                style: dropdownTextDesign,
+                              ));
+                        }).toList()
+                      : null,
+                  onChanged: (dynamic newValue) {
+                    officeid = newValue;
+                    setBranch(officeid);
+                  }),
             ),
-            DropdownButton(
-                hint: Text('Select Office '),
-                value: officeid,
-                icon: Icon(Icons.keyboard_arrow_down),
-                items: convertedJsonDataOffic != null
-                    ? convertedJsonDataOffic.map((OfficeMas items) {
-                        return DropdownMenuItem(
-                            value: items.officeid.toString(),
-                            child: Text(items.officeName));
-                      }).toList()
-                    : null,
-                onChanged: (dynamic newValue) {
-                  officeid = newValue;
-                  setBranch(officeid);
-                }),
-            DropdownButton(
-                hint: Text('Select Branch '),
-                value: branchid,
-                icon: Icon(Icons.keyboard_arrow_down),
-                items: convertedJsonBranch != null
-                    ? convertedJsonBranch.map((BranchMas items) {
-                        return DropdownMenuItem(
-                            value: items.branchid,
-                            child: Text(items.branchName));
-                      }).toList()
-                    : null,
-                onChanged: (dynamic newValue) {
-                  setState(() {
-                    branchid = newValue;
-                  });
-                }),
+            Container(
+              margin: EdgeInsets.only(left: 14, right: 14),
+              child: DropdownButton(
+                  hint: Text('Select Branch '),
+                  value: branchid,
+                  isExpanded: true,
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  items: convertedJsonBranch != null
+                      ? convertedJsonBranch.map((BranchMas items) {
+                          return DropdownMenuItem(
+                              value: items.branchid,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  items.branchName,
+                                  style: dropdownTextDesign,
+                                ),
+                              ));
+                        }).toList()
+                      : null,
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      branchid = newValue;
+                    });
+                  }),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: myissuedto,
                 decoration: InputDecoration(
-                  hintText: 'Issued To (Name)',
-                  border: OutlineInputBorder(),
+                  labelText: 'Enter Name',
+                  hintText: 'Issued to',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Colors.green),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Color(0xffF02E65)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 3, color: Color.fromARGB(255, 66, 125, 145)),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.person,
+                    color: Colors.green,
+                    size: 30,
+                  ),
                 ),
               ),
             ),
@@ -221,8 +266,48 @@ class _TransferProductState extends State<TransferProduct> {
               child: TextField(
                 controller: mymobile,
                 decoration: InputDecoration(
-                  hintText: 'Enter Mobile Number ...',
-                  border: OutlineInputBorder(),
+                  labelText: 'Enter Mobile',
+                  hintText: '+91',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Colors.green),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Color(0xffF02E65)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 3, color: Color.fromARGB(255, 66, 125, 145)),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.call,
+                    color: Colors.green,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: myremarks,
+                decoration: InputDecoration(
+                  labelText: 'Enter Remarks',
+                  hintText: 'Remarks..',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Colors.green),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 3, color: Color(0xffF02E65)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 3, color: Color.fromARGB(255, 66, 125, 145)),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.comment,
+                    color: Colors.green,
+                    size: 30,
+                  ),
                 ),
               ),
             ),
@@ -232,6 +317,7 @@ class _TransferProductState extends State<TransferProduct> {
                 Album user = new Album(
                   mobile: mymobile.text,
                   issuedto: myissuedto.text,
+                  remarks: myremarks.text,
                   selectBranch: branchid.toString(),
                 );
 

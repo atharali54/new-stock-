@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:stock/Drawer.dart';
+import 'package:stock/FilterStock.dart';
 
-import 'CatPage.dart';
-
-import 'FilterStock.dart';
-import 'Login.dart';
-import 'Namewise.dart';
 import 'Search.dart';
 
-class HomePage extends StatelessWidget {
+class HomeUser extends StatelessWidget {
+  String utype;
+  String mob;
+  String branchid;
+  HomeUser({
+    Key key,
+    this.utype,
+    this.mob,
+    this.branchid,
+  }) : super(key: key);
   final gridtitle = TextStyle(fontSize: 14, color: Colors.brown);
   @override
   Widget build(BuildContext context) {
@@ -60,13 +65,15 @@ class HomePage extends StatelessWidget {
                         children: <Widget>[
                           InkWell(
                             child: MyContainer(
-                                myicon: Icons.search,
-                                tittle: 'Name/Mobile/Serial No Wise'),
+                                myicon: Icons.search, tittle: 'Userwise'),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SearchScreen(),
+                                  builder: (context) => SearchScreen(
+                                    Mob: mob,
+                                    utype: utype,
+                                  ),
                                 ),
                               );
                             },
@@ -74,52 +81,20 @@ class HomePage extends StatelessWidget {
                           InkWell(
                             child: MyContainer(
                                 myicon: Icons.supervised_user_circle,
-                                tittle: 'Category Wise'),
+                                tittle: 'Office wise'),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CatPage(),
+                                  builder: (context) => TestPage(
+                                    Mob: mob,
+                                    utype: utype,
+                                    bid: branchid,
+                                  ),
                                 ),
                               );
                             },
                           ),
-                          InkWell(
-                            child: MyContainer(
-                                myicon: Icons.person, tittle: 'Name Wise'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Namewise(),
-                                ),
-                              );
-                            },
-                          ),
-                          InkWell(
-                            child: MyContainer(
-                                myicon: Icons.business, tittle: 'Office Wise'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TestPage(),
-                                ),
-                              );
-                            },
-                          ),
-                          // InkWell(
-                          //   child: MyContainer(
-                          //       myicon: Icons.business, tittle: 'Login'),
-                          //   onTap: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => Signin(),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
                         ],
                       ),
                     ),

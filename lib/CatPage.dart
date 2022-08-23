@@ -12,6 +12,8 @@ import 'Model/OfficemasModel.dart';
 String statusValue;
 String officeid;
 int branchid;
+var dropdownTextDesign =
+    TextStyle(fontSize: 20, color: Colors.brown, fontWeight: FontWeight.bold);
 
 class CatPage extends StatefulWidget {
   @override
@@ -201,7 +203,7 @@ class _ApiMapEx04State extends State<CatPage> {
               margin: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 0),
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  side: BorderSide(width: 2.0, style: BorderStyle.solid),
                   borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 ),
               ),
@@ -214,7 +216,13 @@ class _ApiMapEx04State extends State<CatPage> {
                       ? convertedJsonDataOffic.map((OfficeMas items) {
                           return DropdownMenuItem(
                               value: items.officeid.toString(),
-                              child: Text(items.officeName));
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  items.officeName.toUpperCase(),
+                                  style: dropdownTextDesign,
+                                ),
+                              ));
                         }).toList()
                       : null,
                   onChanged: (dynamic newValue) {
@@ -238,7 +246,13 @@ class _ApiMapEx04State extends State<CatPage> {
                       ? convertedJsonBranch.map((BranchMas items) {
                           return DropdownMenuItem(
                               value: items.branchid,
-                              child: Text(items.branchName));
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  items.branchName.toUpperCase(),
+                                  style: dropdownTextDesign,
+                                ),
+                              ));
                         }).toList()
                       : null,
                   onChanged: (dynamic newValue) {
@@ -252,7 +266,13 @@ class _ApiMapEx04State extends State<CatPage> {
               value: statusValue,
               icon: Icon(Icons.keyboard_arrow_down),
               items: itemStatus.map((String items) {
-                return DropdownMenuItem(value: items, child: Text(items));
+                return DropdownMenuItem(
+                  value: items,
+                  child: Text(
+                    items,
+                    style: dropdownTextDesign,
+                  ),
+                );
               }).toList(),
               onChanged: (String newValue) {
                 setState(() {

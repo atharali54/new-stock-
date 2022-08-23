@@ -12,6 +12,14 @@ import 'Transfer.dart';
 String statusValue;
 
 class SearchScreen extends StatefulWidget {
+  String utype;
+  String Mob;
+  SearchScreen({
+    Key key,
+    this.utype,
+    this.Mob,
+  }) : super(key: key);
+
   @override
   _ApiMapEx04State createState() => _ApiMapEx04State();
 }
@@ -87,6 +95,8 @@ class _ApiMapEx04State extends State<SearchScreen> {
         convertedJsonData = users;
       });
     });
+
+    textEditingController.text = widget.Mob;
   }
 
   void filterdate() {
@@ -113,6 +123,7 @@ class _ApiMapEx04State extends State<SearchScreen> {
           Padding(
             padding: EdgeInsets.all(10),
             child: TextField(
+              enabled: widget.utype == "A" ? true : false,
               controller: textEditingController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -199,36 +210,50 @@ class _ApiMapEx04State extends State<SearchScreen> {
                           convertedJsonData1[index].make +
                               " " +
                               convertedJsonData1[index].modelno,
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold),
                         ),
-                        leading: Icon(Icons.arrow_back),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => TransferProduct(
-                                  srno:
-                                      convertedJsonData1[index].srno.toString(),
-                                  office: convertedJsonData1[index]
-                                      .office
-                                      .toString(),
-                                  branchid: convertedJsonData1[index]
-                                      .branchid
-                                      .toString(),
-                                  issued: convertedJsonData1[index]
-                                      .issuedto
-                                      .toString(),
-                                  mobile: convertedJsonData1[index]
-                                      .mobile
-                                      .toString(),
-                                ),
+                        leading: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.arrow_back,
+                              size: 34,
+                              color: Colors.orange,
+                            ),
+                          ],
+                        ),
+                        trailing: widget.utype == "A"
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => TransferProduct(
+                                        srno: convertedJsonData1[index]
+                                            .srno
+                                            .toString(),
+                                        office: convertedJsonData1[index]
+                                            .office
+                                            .toString(),
+                                        branchid: convertedJsonData1[index]
+                                            .branchid
+                                            .toString(),
+                                        issued: convertedJsonData1[index]
+                                            .issuedto
+                                            .toString(),
+                                        mobile: convertedJsonData1[index]
+                                            .mobile
+                                            .toString(),
+                                      ),
 
-                                //Cart(_cartList),
-                              ),
-                            );
-                          },
-                          child: Text('TR'),
-                        ),
+                                      //Cart(_cartList),
+                                    ),
+                                  );
+                                },
+                                child: Text('TR'),
+                              )
+                            : null,
                         // Text(
                         //   '₹' + convertedJsonData1[index].price.toString(),
                         //   style: TextStyle(color: Colors.green),
@@ -239,6 +264,14 @@ class _ApiMapEx04State extends State<SearchScreen> {
                             // Text(convertedJsonData1[index]
                             //     .warrantyPeriod
                             //     .toString()),
+                            Text(convertedJsonData1[index].category,
+                                style: TextStyle(color: Colors.green)),
+                            Text(
+                              'Office: ' +
+                                  convertedJsonData1[index].office +
+                                  ' -> ' +
+                                  convertedJsonData1[index].branch,
+                            ),
                             Text('S.No: ' + convertedJsonData1[index].serialno),
                             Text('Issued: ' +
                                 convertedJsonData1[index].issuedto.toString()),

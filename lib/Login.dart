@@ -2,12 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:stock/Home.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:stock/Namewise.dart';
+
+import 'HomeUser.dart';
+import 'Model/ModelLoginApi.dart';
+
+String erromsg = "";
+List<StockLogin> modeldatavar;
+
 class Signin extends StatefulWidget {
   @override
   _SigninState createState() => _SigninState();
 }
 
 class _SigninState extends State<Signin> {
+  List<StockLogin> convertedJsonDatalogin;
+
+  Future<List<StockLogin>> fetchLoginData(String p) async {
+    try {
+      http.Response response =
+          await http.get('http://103.87.24.57/stockapi/users/' + p);
+      if (response.statusCode == 200) {
+        convertedJsonDatalogin = stockLoginFromJson(response.body);
+        return convertedJsonDatalogin;
+      } else {
+        return throw Exception('Failed to load ...');
+      }
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
   // For CircularProgressIndicator.
   bool visible = false;
 
@@ -15,63 +43,40 @@ class _SigninState extends State<Signin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future userLogin() async {
+  Future userLogin2() async {
     // Showing CircularProgressIndicator.
-    setState(() {
-      visible = true;
-    });
 
     // Getting value from Controller
     String email = emailController.text;
     String password = passwordController.text;
+    if (email.isNotEmpty && password.isNotEmpty) {
+      var v = await fetchLoginData(email);
 
-    // SERVER LOGIN API URL
-    var url = 'http://192.236.160.238/api/login';
-
-    // Store all data with Param Name.
-    var data = {'email': email, 'password': password};
-
-    // Starting Web API Call.
-    var response = await http.post(url, body: json.encode(data[email]));
-    print(data);
-
-    // Getting Server response into variable.
-    var message = jsonDecode(response.body);
-    print(message);
-
-    // If the Response Message is Matched.
-    if (message == 'success') {
-      // Hiding the CircularProgressIndicator.
-      setState(() {
-        visible = false;
-      });
-
-      // Navigate to Home & Sending Email to Next Screen.
-      Navigator.pushNamed(context, '/home');
-    } else {
-      // If Email or Password did not Matched.
-      // Hiding the CircularProgressIndicator.
-      setState(() {
-        visible = false;
-      });
-
-      // Showing Alert Dialog with Response JSON Message.
-      // showDialog(
-      //   context: context,
-      //   builder: (BuildContext context) {
-      //     return AlertDialog(
-      //       title: new Text(message),
-      //       actions: <Widget>[
-      //         FlatButton(
-      //           child: new Text("OK"),
-      //           onPressed: () {
-      //             Navigator.of(context).pop();
-      //           },
-      //         ),
-      //       ],
-      //     );
-      //   },
-      // );
+      if (convertedJsonDatalogin.isEmpty) {
+        setState(() {
+          erromsg = 'invalid user';
+        });
+      } else if (convertedJsonDatalogin[0].pass != password) {
+        setState(() {
+          erromsg = 'invalid password';
+        });
+      } else if (convertedJsonDatalogin[0].pass == password &&
+          convertedJsonDatalogin[0].type == "U") {
+        erromsg = ' ';
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeUser(
+                      mob: email,
+                      utype: convertedJsonDatalogin[0].type,
+                      branchid: convertedJsonDatalogin[0].branchid.toString(),
+                    )));
+      } else if (convertedJsonDatalogin[0].pass == password &&
+          convertedJsonDatalogin[0].type == "A") {
+        erromsg = ' ';
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      }
     }
   }
 
@@ -88,14 +93,17 @@ class _SigninState extends State<Signin> {
           children: <Widget>[
             Center(
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/rcmsbg.png'),
+                backgroundImage: AssetImage('assets/homeBg.jpg'),
                 radius: 60.0,
               ),
             ),
             SizedBox(height: 10.0),
             TextFormField(
+              keyboardType: TextInputType.number,
+              maxLength: 10,
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Enter Username or Email'),
+              decoration:
+                  InputDecoration(labelText: 'Enter Username or Mobile'),
             ),
             SizedBox(height: 10.0),
             TextFormField(
@@ -106,9 +114,10 @@ class _SigninState extends State<Signin> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: userLogin,
+              onPressed: userLogin2,
               child: Text('login'),
             ),
+            Text(erromsg),
           ],
         ),
         // ],

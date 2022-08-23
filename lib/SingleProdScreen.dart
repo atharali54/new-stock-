@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+var singleprodtxt = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w500,
+);
+
 // ignore: must_be_immutable
 class MySingleProduct extends StatefulWidget {
   String promodelid;
@@ -66,101 +71,103 @@ class _MySingleProductState extends State<MySingleProduct> {
         body: Center(
           child: Card(
             shadowColor: Colors.black,
-            color: Colors.greenAccent,
+            color: Colors.grey[300],
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: 500,
-                height: 400,
+                // height: 100,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //  Text('Model No:- ' + 'widget.promodelno'),
                     Center(
                       child: Text(
-                        widget.procategory,
+                        //  'widget.procategory' + 'Details',
+                        'Details',
                         style: TextStyle(
-                          fontSize: 18,
-                          // color: Colors.green[900],
+                          fontSize: 26,
+                          color: Colors.red[900],
                           fontWeight: FontWeight.w500,
                         ), //Textstyle
                       ),
                     ),
 
                     Divider(
-                      color: Colors.black,
+                      color: Colors.brown,
                     ),
 
                     Text(
                       'Project:-  ' + widget.promodelid,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt,
+                      //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Make:-   ' + widget.promake,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Model:-   ' + widget.promodelno,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Serial No:-  ' + widget.prodevicesrno,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Status:-  ' + widget.prostatus,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Office:-  ' + widget.prooffice,
-
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Branch:-  ' + widget.probranch,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Issued Name:-  ' + widget.probissue,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Mobile:-  ' + widget.probmobile,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                     Text(
                       'Remarks:-  ' + widget.proremarks,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ), //Textstyle
+                      style: singleprodtxt, //Textstyle
+                    ),
+                    Divider(
+                      color: Colors.brown,
                     ),
                   ],
                 ),

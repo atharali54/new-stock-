@@ -37,10 +37,10 @@ class _DrawerMenuState extends State<DrawerMenu> {
                             'assets/homeBg.jpg',
                           ))),
                 ),
-                Text(
-                  'STOCK',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )
+                // Text(
+                //   'STOCK',
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // )
               ],
             ),
           ),
@@ -48,7 +48,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             leading: Icon(
               Icons.category,
               color: Colors.brown,
-              size: 40,
+              size: 30,
             ),
             title: Text(
               'Categories',
@@ -63,10 +63,25 @@ class _DrawerMenuState extends State<DrawerMenu> {
             leading: Icon(
               Icons.search,
               color: Colors.brown,
-              size: 40,
+              size: 30,
             ),
             title: Text(
               'Search',
+              style: TextStyle(fontSize: 20),
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.share,
+              color: Colors.brown,
+              size: 30,
+            ),
+            title: Text(
+              'Share',
               style: TextStyle(fontSize: 20),
             ),
             onTap: () {

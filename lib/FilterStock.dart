@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:stock/Model/BranchmasModel.dart';
 import 'Model/AllDataModel.dart';
 import 'Model/OfficemasModel.dart';
-import 'SinglePageData.dart';
 import 'SingleProdScreen.dart';
 import 'Transfer.dart';
 
@@ -17,39 +14,11 @@ List<AllStock> convertedJsonData1;
 String officvalue;
 
 class TestPage extends StatefulWidget {
-  String id;
-  String promodelid;
-  String proprice;
-  String prosrno;
-  String prostockRegister;
-  String promodelno;
-  String promake;
-  String proremarks;
-  String procategory;
-  String protehsil;
-  String prostatus;
-  String probranchide;
-  String prowarrantyPeriod;
-  String prodealer;
-  String propresentlocation;
   // String prodealer;
-  TestPage(
-      {Key key,
-      this.promake,
-      this.promodelid,
-      this.procategory,
-      this.proprice,
-      this.prodealer,
-      this.promodelno,
-      this.probranchide,
-      this.proremarks,
-      this.prosrno,
-      this.prostatus,
-      this.prostockRegister,
-      this.protehsil,
-      this.propresentlocation,
-      this.prowarrantyPeriod})
-      : super(key: key);
+  String utype;
+  String Mob;
+  String bid;
+  TestPage({Key key, this.utype, this.Mob, this.bid}) : super(key: key);
 
   @override
   State<TestPage> createState() => _TestPageState();
@@ -91,24 +60,55 @@ class _TestPageState extends State<TestPage> {
   }
 
   Future<void> setBranch(String id) async {
+    branchid = null;
     var d = await fetchBranchMas(id);
     setState(() {});
   }
 
   void initState() {
     super.initState();
-    fetchOfficeData().then((users) {
-      setState(() {
-        convertedJsonDataOffic = users;
+    if (widget.utype == "A") {
+      fetchOfficeData().then((users) {
+        setState(() {
+          convertedJsonDataOffic = users;
+        });
       });
-    });
-    getStock();
+    }
+
+    if (widget.utype == "A") {
+      getStock();
+    } else {
+      fetchBranchStock(widget.bid).then((users) {
+        if (this.mounted) {
+          setState(() {
+            convertedJsonData1 = users.toList();
+          });
+        }
+      });
+    }
   }
 
   Future<List<AllStock>> fetchData() async {
     try {
       http.Response response =
           await http.get('http://103.87.24.57/stockapi/stock');
+      if (response.statusCode == 200) {
+        // final List<User> user = userFromJson(response.body);
+        // return user;
+
+        return allStockFromJson(response.body);
+      } else {
+        return throw Exception('Failed to load ...');
+      }
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
+  Future<List<AllStock>> fetchBranchStock(String bid) async {
+    try {
+      http.Response response =
+          await http.get('http://103.87.24.57/stockapi/StockList/' + bid);
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
@@ -132,11 +132,14 @@ class _TestPageState extends State<TestPage> {
     });
   }
 
+  var testdata;
   void filter() {
     setState(() {
       convertedJsonData1 = convertedJsonData
           .where((element) => element.branchid == branchid)
           .toList();
+
+      testdata = Text(convertedJsonData1.length.toString());
     });
   }
 
@@ -149,71 +152,80 @@ class _TestPageState extends State<TestPage> {
       body: Column(
         children: [
           Container(
-            child: Column(
-              children: <Widget>[
-                Container(
-                    margin:
-                        EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 0),
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                        borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                      ),
-                    ),
-                    child: DropdownButton(
-                        isExpanded: true,
-                        hint: Text('Select Office '),
-                        value: officeid,
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        items: convertedJsonDataOffic != null
-                            ? convertedJsonDataOffic.map((OfficeMas items) {
-                                return DropdownMenuItem(
-                                    value: items.officeid.toString(),
-                                    child: Text(items.officeName));
-                              }).toList()
-                            : null,
-                        onChanged: (dynamic newValue) {
-                          officeid = newValue;
-                          setBranch(officeid);
-                        })),
-                Container(
-                    margin:
-                        EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 0),
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                        borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                      ),
-                    ),
-                    child: DropdownButton(
-                        isExpanded: true,
-                        hint: Text('Select Branch '),
-                        value: branchid,
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        items: convertedJsonBranch != null
-                            ? convertedJsonBranch.map((BranchMas items) {
-                                return DropdownMenuItem(
-                                    value: items.branchid,
-                                    child: Text(items.branchName));
-                              }).toList()
-                            : null,
-                        onChanged: (dynamic newValue) {
-                          setState(() {
-                            branchid = newValue;
-                          });
-                        })),
-                Container(
-                  child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          filter();
-                        });
-                      },
-                      child: Text('SEARCH')),
-                ),
-              ],
-            ),
-          ),
+              padding: EdgeInsets.only(top: 20),
+              child: widget.utype == "A"
+                  ? Column(
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 5, left: 10, right: 10, bottom: 0),
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1.0, style: BorderStyle.solid),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4.0)),
+                              ),
+                            ),
+                            child: DropdownButton(
+                                isExpanded: true,
+                                hint: Text('Select Office '),
+                                value: officeid,
+                                icon: Icon(Icons.keyboard_arrow_down),
+                                items: convertedJsonDataOffic != null
+                                    ? convertedJsonDataOffic
+                                        .map((OfficeMas items) {
+                                        return DropdownMenuItem(
+                                            value: items.officeid.toString(),
+                                            child: Text(items.officeName));
+                                      }).toList()
+                                    : null,
+                                onChanged: (dynamic newValue) {
+                                  officeid = newValue;
+                                  setBranch(officeid);
+                                })),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 5, left: 10, right: 10, bottom: 0),
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1.0, style: BorderStyle.solid),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4.0)),
+                              ),
+                            ),
+                            child: DropdownButton(
+                                isExpanded: true,
+                                hint: Text('Select Branch '),
+                                value: branchid,
+                                icon: Icon(Icons.keyboard_arrow_down),
+                                items: convertedJsonBranch != null
+                                    ? convertedJsonBranch
+                                        .map((BranchMas items) {
+                                        return DropdownMenuItem(
+                                            value: items.branchid,
+                                            child: Text(items.branchName));
+                                      }).toList()
+                                    : null,
+                                onChanged: (dynamic newValue) {
+                                  setState(() {
+                                    branchid = newValue;
+                                  });
+                                })),
+                        Container(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  filter();
+                                });
+                              },
+                              child: Text('SEARCH')),
+                        ),
+                        //   Text(convertedJsonData1.length.toString())
+                      ],
+                    )
+                  : null),
           Expanded(
             child: ListView.builder(
                 shrinkWrap: true,
@@ -279,32 +291,50 @@ class _TestPageState extends State<TestPage> {
                           convertedJsonData1[index].make +
                               " " +
                               convertedJsonData1[index].modelno,
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           softWrap: false,
                         ),
-                        leading: Icon(Icons.arrow_back),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TransferProduct(
-                                srno: convertedJsonData1[index].srno.toString(),
-                                office:
-                                    convertedJsonData1[index].office.toString(),
-                                branchid: convertedJsonData1[index]
-                                    .branchid
-                                    .toString(),
-                                issued: convertedJsonData1[index]
-                                    .issuedto
-                                    .toString(),
-                                mobile:
-                                    convertedJsonData1[index].mobile.toString(),
-                                //Cart(_cartList),
-                              ),
-                            ));
-                          },
-                          child: Text('TR'),
+                        leading: widget.utype == "A"
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => TransferProduct(
+                                      srno: convertedJsonData1[index]
+                                          .srno
+                                          .toString(),
+                                      office: convertedJsonData1[index]
+                                          .office
+                                          .toString(),
+                                      branchid: convertedJsonData1[index]
+                                          .branchid
+                                          .toString(),
+                                      issued: convertedJsonData1[index]
+                                          .issuedto
+                                          .toString(),
+                                      mobile: convertedJsonData1[index]
+                                          .mobile
+                                          .toString(),
+                                      //Cart(_cartList),
+                                    ),
+                                  ));
+                                },
+                                child: Text('TR'),
+                              )
+                            : null,
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Icon(Icons.navigate_next_outlined),
+                            Icon(
+                              Icons.navigate_next,
+                              size: 40,
+                              color: Colors.orange,
+                            ),
+                          ],
                         ),
                         // Text(
                         //   '₹' + convertedJsonData1[index].price.toString(),
@@ -316,7 +346,16 @@ class _TestPageState extends State<TestPage> {
                             // Text(convertedJsonData1[index]
                             //     .warrantyPeriod
                             //     .toString()),
+                            Text(
+                              convertedJsonData1[index].category,
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            ),
                             Text('S.No: ' + convertedJsonData1[index].serialno),
+                            Text(convertedJsonData1[index].office +
+                                ' -> ' +
+                                convertedJsonData1[index].branch),
                             Text('Issued: ' +
                                 convertedJsonData1[index].issuedto.toString()),
                           ],
