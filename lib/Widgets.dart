@@ -29,8 +29,8 @@ class Itempage extends StatefulWidget {
 class _ItempageState extends State<Itempage> {
   Future<List<AllStock>> fetchData() async {
     try {
-      http.Response response =
-          await http.get('http://103.87.24.57/stockapi/stock/${widget.id}');
+      http.Response response = await http
+          .get(Uri.parse('http://103.87.24.57/stockapi/stock/${widget.id}'));
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
@@ -51,7 +51,7 @@ class _ItempageState extends State<Itempage> {
   Future<List<OfficeMas>> fetchOfficeData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/officemas');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/officemas'));
       if (response.statusCode == 200) {
         convertedJsonDataOffic = officeMasFromJson(response.body);
         return convertedJsonDataOffic;
@@ -65,8 +65,8 @@ class _ItempageState extends State<Itempage> {
 
   Future<List<BranchMas>> fetchBranchMas(String officeid) async {
     try {
-      http.Response response = await http
-          .get('http://103.87.24.57/stockapi/branchmas/' + officeid.toString());
+      http.Response response = await http.get(Uri.parse(
+          'http://103.87.24.57/stockapi/branchmas/' + officeid.toString()));
       if (response.statusCode == 200) {
         convertedJsonBranch = branchMasFromJson(response.body);
         return convertedJsonBranch;

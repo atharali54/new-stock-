@@ -7,6 +7,7 @@ var singleprodtxt = TextStyle(
 
 // ignore: must_be_immutable
 class MySingleProduct extends StatefulWidget {
+  String utype;
   String promodelid;
   String proprice;
   String prosrno;
@@ -28,6 +29,7 @@ class MySingleProduct extends StatefulWidget {
 
   MySingleProduct(
       {Key key,
+      this.utype,
       this.promake,
       this.promodelid,
       this.procategory,
@@ -169,6 +171,15 @@ class _MySingleProductState extends State<MySingleProduct> {
                     Divider(
                       color: Colors.brown,
                     ),
+
+                    // ElevatedButton(
+                    //   style: ButtonStyle(
+                    //     backgroundColor:
+                    //         MaterialStateProperty.all<Color>(Colors.amber[800]),
+                    //   ),
+                    //   onPressed: () {},
+                    //   child: Text("Verify Record"),
+                    // )
                   ],
                 ),
               ),

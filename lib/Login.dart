@@ -24,7 +24,7 @@ class _SigninState extends State<Signin> {
   Future<List<StockLogin>> fetchLoginData(String p) async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/users/' + p);
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/users/' + p));
       if (response.statusCode == 200) {
         convertedJsonDatalogin = stockLoginFromJson(response.body);
         return convertedJsonDatalogin;

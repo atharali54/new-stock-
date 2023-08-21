@@ -32,7 +32,7 @@ class _TestPageState extends State<TestPage> {
   Future<List<OfficeMas>> fetchOfficeData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/officemas');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/officemas'));
       if (response.statusCode == 200) {
         convertedJsonDataOffic = officeMasFromJson(response.body);
         return convertedJsonDataOffic;
@@ -44,10 +44,20 @@ class _TestPageState extends State<TestPage> {
     }
   }
 
+  Future VerifyStock(String srno, String value) async {
+    try {
+      http.Response response = await http.post(Uri.parse(
+          'http://103.87.24.57/stockapi/Transfer/' + srno + "/" + value));
+      print(response.statusCode);
+    } catch (e) {
+      return throw Exception('Failed to load ...');
+    }
+  }
+
   Future<List<BranchMas>> fetchBranchMas(String officeid) async {
     try {
-      http.Response response = await http
-          .get('http://103.87.24.57/stockapi/branchmas/' + officeid.toString());
+      http.Response response = await http.get(Uri.parse(
+          'http://103.87.24.57/stockapi/branchmas/' + officeid.toString()));
       if (response.statusCode == 200) {
         convertedJsonBranch = branchMasFromJson(response.body);
         return convertedJsonBranch;
@@ -91,7 +101,7 @@ class _TestPageState extends State<TestPage> {
   Future<List<AllStock>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/stock');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/stock'));
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
@@ -107,8 +117,8 @@ class _TestPageState extends State<TestPage> {
 
   Future<List<AllStock>> fetchBranchStock(String bid) async {
     try {
-      http.Response response =
-          await http.get('http://103.87.24.57/stockapi/StockList/' + bid);
+      http.Response response = await http
+          .get(Uri.parse('http://103.87.24.57/stockapi/StockList/' + bid));
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
@@ -237,6 +247,7 @@ class _TestPageState extends State<TestPage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => MySingleProduct(
+                              utype: widget.utype,
                               probranchid:
                                   convertedJsonData1[index].branchid.toString(),
                               prooffice:
@@ -329,11 +340,33 @@ class _TestPageState extends State<TestPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Icon(Icons.navigate_next_outlined),
-                            Icon(
-                              Icons.navigate_next,
-                              size: 40,
-                              color: Colors.orange,
-                            ),
+                            widget.utype != "U"
+                                ? IconButton(
+                                    onPressed: () async {
+                                      bool value = (convertedJsonData1[index]
+                                          .verify) as bool;
+                                      value = !value;
+                                      var res = await VerifyStock(
+                                              convertedJsonData1[index]
+                                                  .srno
+                                                  .toString(),
+                                              value.toString())
+                                          .whenComplete(() => getStock()
+                                              .whenComplete(() => filter()));
+                                    },
+                                    icon: ((convertedJsonData1[index].verify))
+                                                as bool ==
+                                            false
+                                        ? Icon(Icons.verified_outlined)
+                                        : Icon(Icons.verified),
+                                    color: ((convertedJsonData1[index].verify))
+                                                as bool ==
+                                            false
+                                        ? Colors.orangeAccent
+                                        : Colors.lightBlue,
+                                    iconSize: 35,
+                                  )
+                                : null
                           ],
                         ),
                         // Text(

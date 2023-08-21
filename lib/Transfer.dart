@@ -16,8 +16,10 @@ Future postUsers(String id, Album users) async {
   };
   var myUsers = users.toJson();
   var usersBody = json.encode(myUsers);
-  var res = await http.put('http://103.87.24.57/stockapi/transfer/${id}',
-      headers: header, body: usersBody);
+  var res = await http.put(
+      Uri.parse('http://103.87.24.57/stockapi/transfer/${id}'),
+      headers: header,
+      body: usersBody);
   print(res.statusCode);
   return res.statusCode;
 }
@@ -58,6 +60,7 @@ class Album {
 
 // ignore: must_be_immutable
 class TransferProduct extends StatefulWidget {
+  
   String srno;
   String office;
   String branchid;
@@ -119,7 +122,7 @@ class _TransferProductState extends State<TransferProduct> {
   Future<List<OfficeMas>> fetchOfficeData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/officemas');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/officemas'));
       if (response.statusCode == 200) {
         convertedJsonDataOffic = officeMasFromJson(response.body);
         return convertedJsonDataOffic;
@@ -133,8 +136,8 @@ class _TransferProductState extends State<TransferProduct> {
 
   Future<List<BranchMas>> fetchBranchMas(String officeid) async {
     try {
-      http.Response response = await http
-          .get('http://103.87.24.57/stockapi/branchmas/' + officeid.toString());
+      http.Response response = await http.get(Uri.parse(
+          'http://103.87.24.57/stockapi/branchmas/' + officeid.toString()));
       if (response.statusCode == 200) {
         convertedJsonBranch = branchMasFromJson(response.body);
         return convertedJsonBranch;

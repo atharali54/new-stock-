@@ -25,7 +25,7 @@ class _ApiMapEx04State extends State<Namewise> {
   Future<List<AllStock>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/stock');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/stock'));
       if (response.statusCode == 200) {
         var student = allStockFromJson(response.body);
 

@@ -36,7 +36,7 @@ class _ApiMapEx04State extends State<SearchScreen> {
   Future<List<AllStock>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/stock');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/stock'));
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;
@@ -225,7 +225,7 @@ class _ApiMapEx04State extends State<SearchScreen> {
                             ),
                           ],
                         ),
-                        trailing: widget.utype == "A"
+                        trailing: widget.utype != "U"
                             ? ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).push(

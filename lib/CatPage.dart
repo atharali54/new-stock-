@@ -29,7 +29,7 @@ class _ApiMapEx04State extends State<CatPage> {
   Future<List<StockCat>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/catwise');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/catwise'));
       if (response.statusCode == 200) {
         convertedJsonData = stockCatFromJson(response.body);
         return convertedJsonData;
@@ -43,8 +43,8 @@ class _ApiMapEx04State extends State<CatPage> {
 
   Future<List<StockCat>> fetchbyidData(String id) async {
     try {
-      http.Response response =
-          await http.get('http://103.87.24.57/stockapi/catwise/' + id);
+      http.Response response = await http
+          .get(Uri.parse('http://103.87.24.57/stockapi/catwise/' + id));
       if (response.statusCode == 200) {
         var d = stockCatFromJson(response.body);
         return d;
@@ -59,7 +59,7 @@ class _ApiMapEx04State extends State<CatPage> {
   Future<List<OfficeMas>> fetchOfficeData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/officemas');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/officemas'));
       if (response.statusCode == 200) {
         convertedJsonDataOffic = officeMasFromJson(response.body);
         return convertedJsonDataOffic;
@@ -73,8 +73,8 @@ class _ApiMapEx04State extends State<CatPage> {
 
   Future<List<BranchMas>> fetchBranchMas(String officeid) async {
     try {
-      http.Response response = await http
-          .get('http://103.87.24.57/stockapi/branchmas/' + officeid.toString());
+      http.Response response = await http.get(Uri.parse(
+          'http://103.87.24.57/stockapi/branchmas/' + officeid.toString()));
       if (response.statusCode == 200) {
         convertedJsonBranch = branchMasFromJson(response.body);
         return convertedJsonBranch;

@@ -24,7 +24,7 @@ class _ApiMapEx04State extends State<CatwithDropdown> {
   Future<List<StockCat>> fetchData() async {
     try {
       http.Response response =
-          await http.get('http://103.87.24.57/stockapi/catwise');
+          await http.get(Uri.parse('http://103.87.24.57/stockapi/catwise'));
       if (response.statusCode == 200) {
         // final List<User> user = userFromJson(response.body);
         // return user;

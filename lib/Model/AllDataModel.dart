@@ -11,31 +11,31 @@ String allStockToJson(List<AllStock> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class AllStock {
-  AllStock({
-    this.srno,
-    this.stockRegister,
-    this.category,
-    this.modelno,
-    this.serialno,
-    this.invoice,
-    this.refno,
-    this.make,
-    this.dop,
-    this.dealer,
-    this.price,
-    this.tehsil,
-    this.installationdate,
-    this.remarks,
-    this.warrantyPeriod,
-    this.amcPeriod,
-    this.status,
-    this.project,
-    this.branchid,
-    this.office,
-    this.branch,
-    this.issuedto,
-    this.mobile,
-  });
+  AllStock(
+      {this.srno,
+      this.stockRegister,
+      this.category,
+      this.modelno,
+      this.serialno,
+      this.invoice,
+      this.refno,
+      this.make,
+      this.dop,
+      this.dealer,
+      this.price,
+      this.tehsil,
+      this.installationdate,
+      this.remarks,
+      this.warrantyPeriod,
+      this.amcPeriod,
+      this.status,
+      this.project,
+      this.branchid,
+      this.office,
+      this.branch,
+      this.issuedto,
+      this.mobile,
+      this.verify});
 
   int srno;
   StockRegister stockRegister;
@@ -61,6 +61,7 @@ class AllStock {
   String branch;
   String issuedto;
   String mobile;
+  bool verify;
 
   factory AllStock.fromJson(Map<String, dynamic> json) => AllStock(
         srno: json["srno"],
@@ -87,6 +88,7 @@ class AllStock {
         branchid: json["branchid"],
         office: json["office"],
         branch: json["branch"],
+        verify: json["verify"],
         issuedto: json["issuedto"] == null ? null : json["issuedto"],
         mobile: json["mobile"] == null ? null : json["mobile"],
       );
